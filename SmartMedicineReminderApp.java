@@ -1,24 +1,23 @@
 import javax.swing.*;
 import javax.swing.Timer;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
 
 public class SmartMedicineReminderApp {
-    // Medicine Class
-    static class Medicine implements Serializable {
-        private static final long serialVersionUID = 1L;
+    
+        static class Medicine implements Serializable {
+            private static final long serialVersionUID = 1L;
 
-        private String name;
-        private String dosage;
-        private String strength;
-        private String timing;
-        private boolean taken;
-        private String status;
-        private String date;
+            private String name;
+            private String dosage;
+            private String strength;
+            private String timing;
+            private boolean taken;
+            private String status;
+            private String date;
 
         public Medicine(String name, String dosage, String strength, String timing, String date) {
             this.name = name;
@@ -61,7 +60,7 @@ public class SmartMedicineReminderApp {
 
         public void setMissed() {
             this.taken = false;
-            this.status = "Missed";
+            this.status = taken ? "Pending" : "Missed";
         }
 
         public String getDate() {
@@ -76,12 +75,12 @@ public class SmartMedicineReminderApp {
                     + (date != null ? date : "No Date") + " (" + status + ")";
         }
 
-        // Method to get a string representation for file saving
+        
         public String toFileString() {
             return name + ";" + dosage + ";" + strength + ";" + timing + ";" + date + ";" + taken + ";" + status;
         }
 
-        // Method to create a Medicine object from a file string
+        
         public static Medicine fromFileString(String fileString) {
             String[] parts = fileString.split(";", -1);
             if (parts.length < 7) return null;
@@ -98,7 +97,7 @@ public class SmartMedicineReminderApp {
         }
     }
 
-    // HealthRecord Class
+    
     static class HealthRecord implements Serializable {
         private static final long serialVersionUID = 1L;
 
@@ -125,12 +124,12 @@ public class SmartMedicineReminderApp {
                     ", Oxygen Level: " + (oxygenLevel != null ? oxygenLevel : "No Data");
         }
 
-        // Method to get a string representation for file saving
+        
         public String toFileString() {
             return date + ";" + bloodPressure + ";" + sugarLevel + ";" + oxygenLevel;
         }
 
-        // Method to create a HealthRecord object from a file string
+        
         public static HealthRecord fromFileString(String fileString) {
             String[] parts = fileString.split(";", -1);
             if (parts.length < 4) return null;
@@ -143,7 +142,7 @@ public class SmartMedicineReminderApp {
         }
     }
 
-    // User Class
+    
     static class User implements Serializable {
         private static final long serialVersionUID = 1L;
 
@@ -183,7 +182,7 @@ public class SmartMedicineReminderApp {
             return healthRecords;
         }
 
-        // Method to get a string representation for file saving
+        
         public String toFileString() {
             StringBuilder sb = new StringBuilder();
             sb.append("User:").append(name).append(";").append(age).append("\n");
@@ -191,20 +190,20 @@ public class SmartMedicineReminderApp {
             for (Medicine med : medicines) {
                 sb.append(med.toFileString()).append("\n");
             }
-            sb.append("HealthRecords:\n");
-            for (HealthRecord record : healthRecords) {
-                sb.append(record.toFileString()).append("\n");
+                sb.append("HealthRecords:\n");
+                for (HealthRecord record : healthRecords) {
+                    sb.append(record.toFileString()).append("\n");
             }
             sb.append("EndUser\n");
             return sb.toString();
         }
 
-        // Method to create a User object from a file string
+        
         public static User fromFileString(BufferedReader reader) throws IOException {
             String line;
             String[] userInfo = null;
 
-            // Read the first line (already read outside this method)
+            
             line = reader.readLine();
             if (line == null || line.isEmpty()) return null;
 
@@ -238,16 +237,16 @@ public class SmartMedicineReminderApp {
         }
     }
 
-    // Main Application Variables
+    
     private JFrame frame;
     private List<User> users;
     private User currentUser;
     private boolean isDarkTheme;
     private Timer reminderTimer;
     private JLabel clockLabel;
-    private JLabel userLabel; // Label to display selected user's name
+    private JLabel userLabel; 
 
-    // Data Persistence File
+    
     private static final String DATA_FILE = "users_data.txt";
 
     public SmartMedicineReminderApp() {
@@ -262,10 +261,10 @@ public class SmartMedicineReminderApp {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 700);
 
-        // Main Panel with Tabs
+        
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        // Clock Display
+        
         clockLabel = new JLabel();
         clockLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         clockLabel.setFont(new Font("Arial", Font.BOLD, 16));
@@ -273,15 +272,15 @@ public class SmartMedicineReminderApp {
         Timer clockTimer = new Timer(1000, e -> updateClock());
         clockTimer.start();
 
-        // User Label to display selected user's name
+        
         userLabel = new JLabel("No User Selected");
         userLabel.setFont(new Font("Arial", Font.BOLD, 16));
 
-        // Toggle Theme Button (More Visible)
+        
         JButton themeToggleButton = new JButton("Toggle Theme");
         themeToggleButton.addActionListener(e -> toggleTheme());
 
-        // Users Tab
+        
         JPanel userPanel = new JPanel(new BorderLayout());
         JPanel userControlPanel = new JPanel();
         JButton addUserButton = new JButton("Add User");
@@ -294,7 +293,7 @@ public class SmartMedicineReminderApp {
         userControlPanel.add(selectUserButton);
         userPanel.add(userControlPanel, BorderLayout.NORTH);
 
-        // Medicines Tab
+        
         JPanel medicinePanel = new JPanel(new BorderLayout());
         JPanel medicineControlPanel = new JPanel();
         JButton addMedicineButton = new JButton("Add Medicine");
@@ -305,31 +304,31 @@ public class SmartMedicineReminderApp {
         addMedicineButton.addActionListener(e -> addMedicine());
         viewMedicinesButton.addActionListener(e -> viewMedicines());
         removeMedicineButton.addActionListener(e -> removeMedicine());
-        printMedicinesButton.addActionListener(e -> printMedicines()); // New Button
+        printMedicinesButton.addActionListener(e -> printMedicines()); 
 
         medicineControlPanel.add(addMedicineButton);
         medicineControlPanel.add(viewMedicinesButton);
         medicineControlPanel.add(removeMedicineButton);
-        medicineControlPanel.add(printMedicinesButton); // Add button to panel
+        medicineControlPanel.add(printMedicinesButton); 
         medicinePanel.add(medicineControlPanel, BorderLayout.NORTH);
 
-        // Health Records Tab
+        
         JPanel healthPanel = new JPanel(new BorderLayout());
         JPanel healthControlPanel = new JPanel();
         JButton addHealthRecordButton = new JButton("Add Health Record");
         JButton viewHealthRecordsButton = new JButton("View Health Records");
-        JButton printHealthRecordsButton = new JButton("Print Health Records"); // New Button
+        JButton printHealthRecordsButton = new JButton("Print Health Records"); 
 
         addHealthRecordButton.addActionListener(e -> addHealthRecord());
         viewHealthRecordsButton.addActionListener(e -> viewHealthRecords());
-        printHealthRecordsButton.addActionListener(e -> printHealthRecords()); // Action Listener
+        printHealthRecordsButton.addActionListener(e -> printHealthRecords()); 
 
         healthControlPanel.add(addHealthRecordButton);
         healthControlPanel.add(viewHealthRecordsButton);
-        healthControlPanel.add(printHealthRecordsButton); // Add button to panel
+        healthControlPanel.add(printHealthRecordsButton); 
         healthPanel.add(healthControlPanel, BorderLayout.NORTH);
 
-        // Calendar Tab
+        
         JPanel calendarPanel = new JPanel(new BorderLayout());
         JButton viewCalendarButton = new JButton("View Calendar");
 
@@ -337,13 +336,13 @@ public class SmartMedicineReminderApp {
 
         calendarPanel.add(viewCalendarButton, BorderLayout.NORTH);
 
-        // Add Tabs to TabbedPane
+        
         tabbedPane.addTab("Users", userPanel);
         tabbedPane.addTab("Medicines", medicinePanel);
         tabbedPane.addTab("Health Records", healthPanel);
         tabbedPane.addTab("Calendar", calendarPanel);
 
-        // Search Functionality
+        
         JPanel topPanel = new JPanel(new BorderLayout());
         JPanel searchPanel = new JPanel(new BorderLayout());
         JTextField searchField = new JTextField();
@@ -355,9 +354,9 @@ public class SmartMedicineReminderApp {
         searchPanel.add(searchField, BorderLayout.CENTER);
         searchPanel.add(searchButton, BorderLayout.EAST);
 
-        // Add Toggle Theme Button to Top Panel
+        
         JPanel topRightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        topRightPanel.add(userLabel); // Display user name
+        topRightPanel.add(userLabel); 
         topRightPanel.add(themeToggleButton);
         topRightPanel.add(clockLabel);
 
@@ -367,7 +366,7 @@ public class SmartMedicineReminderApp {
         frame.getContentPane().add(topPanel, BorderLayout.NORTH);
         frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
-        // Start Reminder Timer
+        
         startReminderTimer();
 
         frame.setVisible(true);
@@ -379,7 +378,7 @@ public class SmartMedicineReminderApp {
     }
 
     private void startReminderTimer() {
-        reminderTimer = new Timer(60000, e -> checkReminders());
+        reminderTimer = new Timer(20000, e -> checkReminders());
         reminderTimer.start();
     }
 
@@ -395,7 +394,7 @@ public class SmartMedicineReminderApp {
                         JOptionPane.showMessageDialog(frame, "Time to take your medicine: " + medicine.getName());
                     }
                 }
-                // Automatically mark as "Missed" if time has passed
+                
                 if (medicine.getDate().equals(currentDate) && medicine.getTiming().compareTo(currentTime) < 0 && !medicine.isTaken()) {
                     medicine.setMissed();
                 }
@@ -434,7 +433,7 @@ public class SmartMedicineReminderApp {
             currentUser = user;
             userLabel.setText("User: " + currentUser.getName());
             JOptionPane.showMessageDialog(frame, "User added and selected!");
-            saveUserData(); // Save data after adding user
+            saveUserData(); 
         }
     }
 
@@ -501,7 +500,7 @@ public class SmartMedicineReminderApp {
             String timing = timingField.getText().trim();
             String date = dateField.getText().trim();
 
-            // All fields are optional
+            
             Medicine medicine = new Medicine(
                     medName.isEmpty() ? null : medName,
                     dosage.isEmpty() ? null : dosage,
@@ -511,7 +510,7 @@ public class SmartMedicineReminderApp {
             );
             currentUser.addMedicine(medicine);
             JOptionPane.showMessageDialog(frame, "Medicine added for " + currentUser.getName() + "!");
-            saveUserData(); // Save data after adding medicine
+            saveUserData(); 
         }
     }
 
@@ -543,7 +542,7 @@ public class SmartMedicineReminderApp {
             if (index != -1) {
                 medicines.get(index).setTaken(true);
                 listModel.setElementAt(medicines.get(index).getDetails(), index);
-                saveUserData(); // Save data after marking as taken
+                saveUserData(); 
             }
         });
 
@@ -588,7 +587,7 @@ public class SmartMedicineReminderApp {
             if (medicineToRemove != null) {
                 currentUser.removeMedicine(medicineToRemove);
                 JOptionPane.showMessageDialog(frame, "Medicine removed.");
-                saveUserData(); // Save data after removing medicine
+                saveUserData(); 
             }
         }
     }
@@ -657,7 +656,7 @@ public class SmartMedicineReminderApp {
             String sugar = sugarField.getText().trim();
             String oxygen = oxygenField.getText().trim();
 
-            // All fields are optional
+            
             HealthRecord record = new HealthRecord(
                     date.isEmpty() ? null : date,
                     bp.isEmpty() ? null : bp,
@@ -666,7 +665,7 @@ public class SmartMedicineReminderApp {
             );
             currentUser.addHealthRecord(record);
             JOptionPane.showMessageDialog(frame, "Health record added for " + currentUser.getName() + "!");
-            saveUserData(); // Save data after adding health record
+            saveUserData(); 
         }
     }
 
@@ -787,7 +786,7 @@ public class SmartMedicineReminderApp {
                 UIManager.put("text", Color.WHITE);
             } else {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                // Reset custom properties
+                
                 UIManager.put("control", null);
                 UIManager.put("info", null);
                 UIManager.put("nimbusBase", null);
@@ -826,16 +825,16 @@ public class SmartMedicineReminderApp {
         try (BufferedReader reader = new BufferedReader(new FileReader(DATA_FILE))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if (!line.isEmpty() && line.startsWith("User:")) {
-                    // Since we've read the "User:" line, we need to create a user from the reader
-                    // Create a new BufferedReader starting from the current line
+                if (!line.isEmpty() && line.startsWith("User:")) {     
+                    
+                    
                     List<String> userDataLines = new ArrayList<>();
-                    userDataLines.add(line); // Add the "User:" line
+                    userDataLines.add(line); 
                     while ((line = reader.readLine()) != null && !line.equals("EndUser")) {
                         userDataLines.add(line);
                     }
-                    userDataLines.add("EndUser"); // Add the "EndUser" line
-                    // Convert the list to a StringReader
+                    userDataLines.add("EndUser"); 
+                    
                     String userData = String.join("\n", userDataLines);
                     BufferedReader userReader = new BufferedReader(new StringReader(userData));
                     User user = User.fromFileString(userReader);
